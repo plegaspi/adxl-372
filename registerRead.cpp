@@ -1,3 +1,5 @@
+// Compiler command:  g++ registerRead.cpp ADXL372.cpp -lspidev-lib++ -lwiringPi -o test && ./test
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,21 +17,22 @@ int cs_pin = 27;
 int  main( void)
 {
 
-  SPI *ardunioSPI = NULL;
+  SPI *arduinoSPI = NULL;
+  ADXL372class *ADXL372 = NULL;
 
   spi_config.mode=0;
-  spi_config.speed=1000000; // Do not set higher than 10 MHz
+  spi_config.speed=100000; // Do not set higher than 10 MHz
   spi_config.delay=0;
   spi_config.bits_per_word=8;
   
   wiringPiSetupGpio();
   pinMode(cs_pin, OUTPUT);
 
-  ardunioSPI=new SPI("/dev/spidev0.1",&spi_config);
+  arduinoSPI=new SPI("/dev/spidev0.1",&spi_config);
 
-  ADXL372 = new ADXL372class(&arduinoSPI, cs_pin);
+  ADXL372 = new ADXL372class(arduinoSPI, cs_pin);
 
-  if (ardunioSPI->begin())
+  if (arduinoSPI->begin())
   {
     // ADXL372 -> reset();
     ADXL372 -> printDevice();
@@ -42,13 +45,14 @@ int  main( void)
     float y = 0.0;
     float z = 0.0;
     while (true) {
-      ADXL372class -> readAcceleration(x, y, z);
+      ADXL372 -> readAcceleration(x, y, z);
       auto finish = std::chrono::high_resolution_clock::now();
-      std::cout << finish << " " << x << " " << y << " " << z << std::endl;
+      auto time_in_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(finish.time_since_epoch()).count();
+      std::cout << std::dec << time_in_ns << " " << x << " " << y << " " << z << std::endl;
     }
-    ardunioSPI -> end();
+    arduinoSPI -> end();
   } else {
-    STD::cout << "Failed to initiate communication via SPI" << std::endl;
+    std::cout << "Failed to initiate communication via SPI" << std::endl;
   }
  return 1;
 }

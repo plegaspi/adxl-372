@@ -225,12 +225,12 @@ public:
     ADXL372class(SPI *spiDevice, int csPin);
 
     // Methods
-    void initialize();
+    void printDevice();
     uint8_t readRegister(uint8_t regAddress);
     void writeRegister(uint8_t regAddress, uint8_t value);
     void updateRegister(uint8_t regAddress, uint8_t value, uint8_t mask);
     bool selfTest();
-    uint8_t reset();
+    void reset();
     void setOdr(Odr odr);
     void setBandwidth(Bandwidth bandwidth);
     void readAcceleration(float &x, float &y, float &z);
@@ -241,13 +241,13 @@ public:
     void setFifoSamples(int sampleSize);
     void setFifoMode(FifoMode mode);
     void setFifoFormat(FifoFormat format);
-    void selectInt1Function(uint8_t function);
-    void selectInt2Function(uint8_t function);
+    void selectInt1Functions(uint8_t function);
+    void selectInt1Function(InterruptFunction function);
+    void selectInt2Functions(uint8_t function);
+    void selectInt2Function(InterruptFunction function);
     void enableExternalClock(bool isEnabled);
     void enableLowNoiseOperation(bool isEnabled);
     void setOperatingMode(OperatingMode opMode);
     void checkStandbyMode();
     void setFilterSettling(FilterSettlingPeriod filterSettling);
 };
-
-#endif // ADXL372_HPP
